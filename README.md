@@ -25,4 +25,8 @@ Why not.
 
 # Notes
 
+This may raise your CPU usage since Netflix was never intended to be played back in 1080p on Chrome.
+
 Make sure to clear your browser cache, as the cached playercore will override the modified one and you will not be able to play 1080p.
+
+Chrome Webstore link: https://chrome.google.com/webstore/detail/netflix-1080p/cankofcoohmbhfpcemhmaaeennfbnmgp
