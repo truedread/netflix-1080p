@@ -21967,12 +21967,20 @@ var o7z = {
                 return {
                     sQ: B,
                     Bw: function(b) {
-                        function c(c) {
+                        async function c(c) {
                             var g;
                             m = sa() - k;
                             t.trace("Auth Delay: " + m);
                             try {
-                                g = c.kL.viewables[0], g.success ? (a.sb = g, rd(g, a, a.M1, a.O1), b(ta), u()) : b(g.result);
+                                g = c.kL.viewables[0];
+                                if (/watch/.test(window.location.pathname)) {
+                                    var manifest = await getManifest();
+                                    var edge_manifest = manifest.result.viewables[0];
+                                    edge_manifest.playbackContextId = g.playbackContextId;
+                                    edge_manifest.drmContextId = g.drmContextId;
+                                    g = edge_manifest;
+                                }
+                                g.success ? (a.sb = g, rd(g, a, a.M1, a.O1), b(ta), u()) : b(g.result);
                             } catch (zh) {
                                 t.error("Exception processing authorization response", zh), b({
                                     K: ca.tW
