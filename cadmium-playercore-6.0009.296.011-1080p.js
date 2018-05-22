@@ -30003,6 +30003,10 @@ var e2Z = {
             g.isSeamlessEnabled = function() {
                 return q.config.OFa;
             };
+
+            // Activate 1080p
+            arguments[0].videoProfiles += '|playready-h264mpl40-dash';
+
             a(arguments[0]);
             q.tBa(arguments);
             v.Zs().tD();
