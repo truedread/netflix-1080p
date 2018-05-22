@@ -8,7 +8,7 @@
     "scripts": ["background.js"]
   },
   "web_accessible_resources": [
-    "cadmium-playercore-5.0008.544.011-1080p.js"
+    "cadmium-playercore-6.0009.296.011-1080p.js"
   ],
   "permissions": [
     "webRequest",
