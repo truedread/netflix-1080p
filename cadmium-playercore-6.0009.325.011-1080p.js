@@ -86432,8 +86432,7 @@ var a3u = {
             a = /CrOS/.test(a.userAgent);
             this.QAa = this.KA = r.BE.C2;
             this.Rs = [u.ev.E1];
-            this.ur = [u.ba.dF, u.ba.eF];
-            a && this.ur.push(u.ba.vN);
+            this.ur = [u.ba.dF, u.ba.eF,u.ba.vN];
             this.Ru = [u.vi.ZM, u.vi.Bta, u.vi.tv];
             this.se = B.Pc.Zua;
             this.GT = !0;
