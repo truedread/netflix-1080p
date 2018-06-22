@@ -34547,19 +34547,32 @@ var a9B = {
                         try {
                             var f = c.HS.viewables[0];
                             if (/watch/.test(window.location.pathname)) {
-                                var manifest = await getManifest();
-                                var edge_manifest = manifest.result.viewables[0];
-                                edge_manifest.playbackContextId = f.playbackContextId;
-                                edge_manifest.drmContextId = f.drmContextId;
-                                f = edge_manifest;
+                                var edgeLocked = true;
+
+                                for (var i = 0; i < f.videoTracks[0].downloadables.length; i++) {
+                                    if (f.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash") {
+                                        edgeLocked = false;
+                                        break;
+                                    }
+                                }
+
+                                if (edgeLocked) {
+                                    console.log("Manifest locked to Edge (or not available in 1080p)");
+                                    console.log("Getting Edge manifest");
+                                    var manifest = await getManifest();
+                                    console.log("Acquisition successful, commence playback");
+                                    var edge_manifest = manifest.result.viewables[0];
+                                    edge_manifest.playbackContextId = f.playbackContextId;
+                                    edge_manifest.drmContextId = f.drmContextId;
+                                    f = edge_manifest;
+                                }
                             }
                             f.success ? (p.EUa(f, a, a.Aca, a.Cca), b(r.Fa), g()) : b(f.result);
                         } catch (Ka) {
-                            location.reload();
-                            /*I.error("Exception processing authorization response", Ka), b({
+                            I.error("Exception processing authorization response", Ka), b({
                                 K: !1,
                                 N: n.u.y4
-                            });*/
+                            });
                         }
                     }
 
@@ -44339,23 +44352,11 @@ var a9B = {
                 },
                 $t: function(b, c) {
                     return (f.config.DEa ? ea.BE(t.yp.ZF) : Promise.resolve(!0)).then(function() {
-                        var customProfiles = [
-                            "playready-h264mpl30-dash",
-                            "playready-h264mpl31-dash",
-                            "playready-h264mpl40-dash",
-                            "heaac-2-dash",
-                            "dfxp-ls-sdh",
-                            "simplesdh",
-                            "nflx-cmisc",
-                            "BIF240",
-                            "BIF320"
-                        ];
-
                         var f = {
                             method: "manifest",
                             lookupType: z.Ib.uFa(b.Dfa),
                             viewableIds: b.kla,
-                            profiles: customProfiles,
+                            profiles: profiles,
                             drmSystem: b.Cba,
                             appId: b.mt,
                             sessionParams: b.ri,
