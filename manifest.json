@@ -2,12 +2,23 @@
   "manifest_version": 2,
   "name": "Netflix 1080p",
   "description": "Forces 1080p playback for Netflix.",
-  "version": "1.4",
+  "version": "1.5",
   "author": "truedread",
+  "content_scripts": [{
+    "matches": [
+      "*://assets.nflxext.com/*/ffe/player/html/*",
+      "*://www.assets.nflxext.com/*/ffe/player/html/*",
+      "*://netflix.com/*",
+      "*://www.netflix.com/*"
+    ],
+    "js": ["content_script.js"],
+    "run_at": "document_start"
+  }],
   "background": {
     "scripts": ["background.js"]
   },
   "web_accessible_resources": [
+    "get_manifest.js",
     "cadmium-playercore-6.0009.457.011-1080p.js"
   ],
   "permissions": [
@@ -15,7 +26,7 @@
     "webRequestBlocking",
     "*://assets.nflxext.com/*/ffe/player/html/*",
     "*://www.assets.nflxext.com/*/ffe/player/html/*",
-    "*://netflix.com/watch/*",
-    "*://www.netflix.com/watch/*"
+    "*://netflix.com/*",
+    "*://www.netflix.com/*"
   ]
 }
