@@ -34551,6 +34551,7 @@ var a9B = {
 
                                 for (var i = 0; i < f.videoTracks[0].downloadables.length; i++) {
                                     if (f.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash") {
+                                        console.log("Manifest not locked to Edge, commencing normal playback");
                                         edgeLocked = false;
                                         break;
                                     }
