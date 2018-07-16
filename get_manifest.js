@@ -82,7 +82,6 @@ var header = {
 
 };
 
-
 async function getViewableId(viewableIdPath) {
     console.log('Getting video metadata for ID ' + viewableIdPath);
 
@@ -98,7 +97,12 @@ async function getViewableId(viewableIdPath) {
     console.log('Metadata response:');
     console.log(apiJson);
 
-    return apiJson.video.currentEpisode;
+    var viewableId = apiJson.video.currentEpisode;
+    if (!viewableId) {
+        viewableId = parseInt(viewableIdPath);
+    }
+
+    return viewableId;
 }
 
 async function performKeyExchange() {
