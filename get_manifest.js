@@ -51,6 +51,7 @@ function generateEsn() {
 }
 
 var manifestUrl = "https://www.netflix.com/api/msl/cadmium/manifest";
+var shaktiMetadataUrl = "https://www.netflix.com/api/shakti/d7cab521/metadata?movieid=";
 var esn = "NFCDIE-02-" + generateEsn();
 var profiles = [
     "playready-h264mpl30-dash",
@@ -80,6 +81,25 @@ var header = {
     "timestamp": Math.round((new Date()).getTime() / 1000),
 
 };
+
+
+async function getViewableId(viewableIdPath) {
+    console.log('Getting video metadata for ID ' + viewableIdPath);
+
+    var apiResp = await fetch(
+        shaktiMetadataUrl + viewableIdPath,
+        {
+            credentials: "same-origin",
+            method: "GET"
+        }
+    );
+
+    var apiJson = await apiResp.json();
+    console.log('Metadata response:');
+    console.log(apiJson);
+
+    return apiJson.video.currentEpisode;
+}
 
 async function performKeyExchange() {
     var keyPair = await window.crypto.subtle.generateKey(
@@ -166,17 +186,22 @@ async function performKeyExchange() {
 }
 
 async function getManifest() {
+    console.log('Performing key exchange');
     var keyExchangeData = await performKeyExchange();
+    console.log('Key exchange data:');
+    console.log(keyExchangeData);
+
     var headerdata = keyExchangeData.headerdata;
     var encryptionKeyData = keyExchangeData.encryptionKeyData;
     var signKeyData = keyExchangeData.signKeyData;
     var mastertoken = headerdata.keyresponsedata.mastertoken;
     var sequenceNumber = JSON.parse(atob(mastertoken.tokendata)).sequencenumber;
-    var viewableId = parseInt(window.location.pathname.substring(7, 15));
+    var viewableIdPath = window.location.pathname.substring(7, 15);
+    var viewableId = await getViewableId(viewableIdPath);
 
     var manifestRequestData = {
         "method": "manifest",
-        "lookupType": "PREPARE",
+        "lookupType": "STANDARD",
         "viewableIds": [viewableId],
         "profiles": profiles,
         "drmSystem": "widevine",
@@ -187,7 +212,7 @@ async function getManifest() {
         },
         "sessionId": "14673889385265",
         "trackId": 0,
-        "flavor": "PRE_FETCH",
+        "flavor": "STANDARD",
         "secureUrls": true,
         "supportPreviewContent": true,
         "showAllSubDubTracks": false,
@@ -319,5 +344,15 @@ async function getManifest() {
         chunks += atob(plaintext.data);
     }
 
-    return JSON.parse(atob(JSON.parse(chunks)[1].payload.data));
+    var manifest = JSON.parse(atob(JSON.parse(chunks)[1].payload.data));
+
+    if (!manifest.success) {
+        console.error(manifest);
+        throw("Error parsing manifest");
+    }
+
+    console.log('Manifest:');
+    console.log(manifest);
+
+    return manifest;
 }
