@@ -206,9 +206,8 @@ async function getManifest() {
 
     var localeId = "en-US";
     try {
-      localeId = netflix.appContext.state.model.models.memberContext.data.geo.locale.id;
-    } catch (e) {
-    }
+        localeId = netflix.appContext.state.model.models.memberContext.data.geo.locale.id;
+    } catch (e) {}
 
     var manifestRequestData = {
         "method": "manifest",
