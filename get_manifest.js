@@ -58,6 +58,7 @@ var profiles = [
     "playready-h264mpl31-dash",
     "playready-h264mpl40-dash",
     "heaac-2-dash",
+    "heaac-5.1-dash",
     "simplesdh",
     "nflx-cmisc",
     "BIF240",

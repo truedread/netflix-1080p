@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Netflix 1080p",
-  "description": "Forces 1080p playback for Netflix.",
-  "version": "1.7",
+  "description": "Forces 1080p and 5.1 playback for Netflix.",
+  "version": "1.8",
   "author": "truedread",
   "browser_action": {
     "default_icon": "img/icon128.png"
