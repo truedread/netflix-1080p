@@ -204,6 +204,12 @@ async function getManifest() {
     var viewableIdPath = window.location.pathname.substring(7, 15);
     var viewableId = await getViewableId(viewableIdPath);
 
+    var localeId = "en-US";
+    try {
+      localeId = netflix.appContext.state.model.models.memberContext.data.geo.locale.id;
+    } catch (e) {
+    }
+
     var manifestRequestData = {
         "method": "manifest",
         "lookupType": "STANDARD",
@@ -222,7 +228,7 @@ async function getManifest() {
         "supportPreviewContent": true,
         "showAllSubDubTracks": false,
         "forceClearStreams": false,
-        "languages": ["en-US"],
+        "languages": [localeId],
     };
 
     header.handshake = false;
