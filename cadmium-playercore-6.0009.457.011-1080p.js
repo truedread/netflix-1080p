@@ -34567,6 +34567,10 @@ var a9B = {
                                     edge_manifest.drmContextId = f.drmContextId;
                                     f = edge_manifest;
                                 }
+
+                                for (var i = 0; i < f.audioTracks.length; i++) {
+                                    f.audioTracks[i].language += ' - ' + f.audioTracks[i].channelsLabel;
+                                }
                             }
                             f.success ? (p.EUa(f, a, a.Aca, a.Cca), b(r.Fa), g()) : b(f.result);
                         } catch (Ka) {
