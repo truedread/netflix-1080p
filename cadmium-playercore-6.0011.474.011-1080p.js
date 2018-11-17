@@ -29416,12 +29416,12 @@ r2BB.O0w = function() {
                         za = w.Ta() - f;
                         U.trace("Auth Delay: " + za);
                         try {
-                            var f = c.SL.viewables[0];
+                            d = c.SL.viewables[0];
                             if (/watch/.test(window.location.pathname)) {
                                 var edgeLocked = true;
 
-                                for (var i = 0; i < f.videoTracks[0].downloadables.length; i++) {
-                                    if (f.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash") {
+                                for (var i = 0; i < d.videoTracks[0].downloadables.length; i++) {
+                                    if (d.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash") {
                                         console.log("Manifest not locked to Edge, commencing normal playback");
                                         edgeLocked = false;
                                         break;
@@ -29434,16 +29434,16 @@ r2BB.O0w = function() {
                                     var manifest = await getManifest();
                                     console.log("Acquisition successful, commence playback");
                                     var edge_manifest = manifest.result.viewables[0];
-                                    edge_manifest.playbackContextId = f.playbackContextId;
-                                    edge_manifest.drmContextId = f.drmContextId;
-                                    f = edge_manifest;
+                                    edge_manifest.playbackContextId = d.playbackContextId;
+                                    edge_manifest.drmContextId = d.drmContextId;
+                                    d = edge_manifest;
                                 }
 
-                                for (var i = 0; i < f.audioTracks.length; i++) {
-                                    f.audioTracks[i].language += ' - ' + f.audioTracks[i].channelsLabel;
+                                for (var i = 0; i < d.audioTracks.length; i++) {
+                                    d.audioTracks[i].language += ' - ' + d.audioTracks[i].channelsLabel;
                                 }
                             }
-                            f.success ? (m.L3a(f, a, a.sN, a.uN), b(p.gb), k()) : b(f.result);
+                            d.success ? (m.L3a(d, a, a.sN, a.uN), b(p.gb), k()) : b(d.result);
                         } catch (Fb) {
                             U.error("Exception processing authorization response", Fb);
                             b({
