@@ -57,6 +57,7 @@ var profiles = [
     "playready-h264mpl30-dash",
     "playready-h264mpl31-dash",
     "playready-h264mpl40-dash",
+    "hevc-main10-L30-dash-cenc-prk", // pointless HEVC PRK profile to bypass the "Playback not permitted because device request did not include a PRK profile." error
     "heaac-2-dash",
     "heaac-5.1-dash",
     "simplesdh",

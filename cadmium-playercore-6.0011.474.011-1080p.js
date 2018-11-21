@@ -43520,7 +43520,7 @@ r2BB.O0w = function() {
                         method: "manifest",
                         lookupType: r.Mb.VOa(b.NO),
                         viewableIds: b.Cbb,
-                        profiles: profiles,
+                        profiles: b.yx.concat(b.Uy).concat(b.w$a).concat(b.Cab).filter(Boolean),
                         drmSystem: b.USa,
                         appId: b.dm,
                         sessionParams: b.ne,
@@ -77766,7 +77766,7 @@ r2BB.O0w = function() {
                 return {
                     type: a.ym ? "offline" : "standard",
                     viewableId: g,
-                    profiles: m,
+                    profiles: profiles,
                     flavor: u.Mb.rY(a.WE),
                     drmType: h,
                     drmVersion: k,
