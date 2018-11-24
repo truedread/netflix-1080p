@@ -58,3 +58,12 @@ Why not.
 - This may raise your CPU usage since Netflix was never intended to be played back in 1080p on Chrome. See [this](https://github.com/truedread/netflix-1080p/issues/15#issuecomment-398256248) comment for more details.
 - Make sure to clear your browser cache, as the cached playercore will override the modified one and you will not be able to play 1080p.
 - On videos where Edge manifest acquisition is needed (the console will say so), initial loading may take 5 seconds longer due to two manifests needing to be obtained.
+
+# Donate
+
+I'm still a student, so if you could help me out and buy me a cup of coffee it would support my future projects and development on this extension! Please note that donating is completely optional; this extension is free and will remain free forever.
+
+- BTC: 1CqGMe6skpNQGSmm7uEtSrVfAUo59fYBnM
+- ETH: 0x87053e321B3a4b94c6c38e6A062bF91649285452
+
+Thanks!
