@@ -29421,7 +29421,9 @@ r2BB.O0w = function() {
                                 var edgeLocked = true;
 
                                 for (var i = 0; i < d.videoTracks[0].downloadables.length; i++) {
-                                    if (d.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash") {
+                                    if (d.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash" ||
+                                        d.videoTracks[0].downloadables[i].contentProfile.startsWith("playready-h264hpl") ||
+                                        d.videoTracks[0].downloadables[i].contentProfile.startsWith("vp9")) {
                                         console.log("Manifest not locked to Edge, commencing normal playback");
                                         edgeLocked = false;
                                         break;

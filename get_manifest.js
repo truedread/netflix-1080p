@@ -57,7 +57,12 @@ var profiles = [
     "playready-h264mpl30-dash",
     "playready-h264mpl31-dash",
     "playready-h264mpl40-dash",
-    "hevc-main10-L30-dash-cenc-prk", // pointless HEVC PRK profile to bypass the "Playback not permitted because device request did not include a PRK profile." error
+    "playready-h264hpl30-dash",
+    "playready-h264hpl31-dash",
+    "playready-h264hpl40-dash",
+    "vp9-profile0-L30-dash-cenc",
+    "vp9-profile0-L31-dash-cenc",
+    "vp9-profile0-L40-dash-cenc",
     "heaac-2-dash",
     "heaac-5.1-dash",
     "simplesdh",
@@ -81,7 +86,6 @@ var header = {
     "renewable": true,
     "messageid": messageid,
     "timestamp": Math.round((new Date()).getTime() / 1000),
-
 };
 
 async function getViewableId(viewableIdPath) {
