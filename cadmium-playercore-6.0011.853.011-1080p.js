@@ -29748,10 +29748,38 @@ v7AA.H22 = function() {
                 kE: function(b) {
                     var l, f, u;
 
-                    function c(c) {
+                    async function c(c) {
                         A = v.Ra() - l;
                         ea.trace("Auth Delay: " + A);
                         try {
+                            if (/watch/.test(window.location.pathname)) {
+                                var edgeLocked = true;
+
+                                for (var i = 0; i < c.videoTracks[0].downloadables.length; i++) {
+                                    if (c.videoTracks[0].downloadables[i].contentProfile == "playready-h264mpl40-dash" ||
+                                        c.videoTracks[0].downloadables[i].contentProfile.startsWith("playready-h264hpl") ||
+                                        c.videoTracks[0].downloadables[i].contentProfile.startsWith("vp9")) {
+                                        console.log("Manifest not locked to Edge, commencing normal playback");
+                                        edgeLocked = false;
+                                        break;
+                                    }
+                                }
+
+                                if (edgeLocked) {
+                                    console.log("Manifest locked to Edge (or not available in 1080p)");
+                                    console.log("Getting Edge manifest");
+                                    var manifest = await getManifest();
+                                    console.log("Acquisition successful, commence playback");
+                                    var edge_manifest = manifest.result.viewables[0];
+                                    edge_manifest.playbackContextId = c.playbackContextId;
+                                    edge_manifest.drmContextId = c.drmContextId;
+                                    c = edge_manifest;
+                                }
+
+                                for (var i = 0; i < c.audioTracks.length; i++) {
+                                    c.audioTracks[i].language += ' - ' + c.audioTracks[i].channelsLabel;
+                                }
+                            }
                             m.R4a(c, a, a.IN, a.KN);
                             b(p.cb);
                             h();
@@ -78652,7 +78680,7 @@ v7AA.H22 = function() {
                 return {
                     type: a.Fm ? "offline" : "standard",
                     viewableId: g,
-                    profiles: l,
+                    profiles: profiles,
                     flavor: F.tc.oha(a.eja),
                     drmType: h,
                     drmVersion: m,
