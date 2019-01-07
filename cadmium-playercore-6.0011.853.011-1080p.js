@@ -36275,7 +36275,7 @@ v7AA.H22 = function() {
             }
 
             function F(a) {
-                a.ctrlKey && a.altKey && a.shiftKey && 83 == a.keyCode && S.gG && v();
+                a.ctrlKey && a.altKey && a.shiftKey && 83 == a.keyCode && v();
             }
             N = h.createElement("DIV", "position:absolute;left:0;top:50%;right:0;bottom:0;text-align:center;color:#040;font-size:11px;font-family:monospace", void 0, {
                 "class": "player-streams"
