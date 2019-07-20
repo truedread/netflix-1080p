@@ -55460,7 +55460,9 @@ H4DD.b57 = function() {
                     }
 
                     if (d.result.from.startsWith("nq_cadmium_pbo_licenses") && !licenseOverridden) {
-                        await getManifest("NFCDIE-04-" + generateEsn());
+                        if (/Intel Mac OS X/.test(navigator.userAgent)) {
+                            await getManifest("NFCDIE-04-" + generateEsn());
+                        }
                         d.result.result = await getLicense(challenge, sessionId);
                         licenseOverridden = true;
                     }

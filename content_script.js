@@ -6,7 +6,7 @@ script_urls = [
 ]
 
 urls = [
-    'get_manifest.js'
+    'msl_client.js'
 ]
 
 // very messy workaround for accessing chrome storage outside of background / content scripts

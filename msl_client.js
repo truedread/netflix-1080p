@@ -359,8 +359,8 @@ async function getManifest(esn=defaultEsn) {
                 {
                     "type": "DigitalVideoOutputDescriptor",
                     "outputType": "unknown",
-                    "supportedHdcpVersions": [],
-                    "isHdcpEngaged": false
+                    "supportedHdcpVersions": ['1.4'],
+                    "isHdcpEngaged": true
                 }
             ],
             "preferAssistiveAudio": false,
