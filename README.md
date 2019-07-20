@@ -65,5 +65,6 @@ I'm still a student, so if you could help me out and buy me a cup of coffee it w
 
 - BTC: 1CqGMe6skpNQGSmm7uEtSrVfAUo59fYBnM
 - ETH: 0x87053e321B3a4b94c6c38e6A062bF91649285452
+- Ko-fi: https://ko-fi.com/truedread
 
 Thanks!
