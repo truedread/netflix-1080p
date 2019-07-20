@@ -30,8 +30,8 @@
     "open_in_tab": false
   },
   "web_accessible_resources": [
-    "get_manifest.js",
-    "cadmium-playercore-6.0011.853.011-1080p.js"
+    "msl_client.js",
+    "cadmium-playercore-6.0015.328.011-1080p.js"
   ],
   "permissions": [
     "storage",

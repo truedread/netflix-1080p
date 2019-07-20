@@ -50,19 +50,14 @@ function generateEsn() {
   return text;
 }
 
-var manifestUrl = "https://www.netflix.com/api/msl/cadmium/manifest";
+var manifestUrl = "https://www.netflix.com/nq/msl_v1/cadmium/pbo_manifests/^1.0.0/router";
+var licenseUrl = "https://www.netflix.com/nq/msl_v1/cadmium/pbo_licenses/^1.0.0/router";
 var shaktiMetadataUrl = "https://www.netflix.com/api/shakti/d7cab521/metadata?movieid=";
-var esn = "NFCDIE-02-" + generateEsn();
+var defaultEsn = "NFCDIE-04-" + generateEsn();
 var profiles = [
     "playready-h264mpl30-dash",
     "playready-h264mpl31-dash",
     "playready-h264mpl40-dash",
-    "playready-h264hpl30-dash",
-    "playready-h264hpl31-dash",
-    "playready-h264hpl40-dash",
-    "vp9-profile0-L30-dash-cenc",
-    "vp9-profile0-L31-dash-cenc",
-    "vp9-profile0-L40-dash-cenc",
     "heaac-2-dash",
     "simplesdh",
     "nflx-cmisc",
@@ -76,23 +71,17 @@ if(use6Channels)
 
 var messageid = Math.floor(Math.random() * 2**52);
 var header = {
-    "sender": esn,
-    "handshake": true,
-    "nonreplayable": false,
+    "sender": defaultEsn,
+    "renewable": true,
     "capabilities": {
-        "languages": [
-            "en-US"
-        ],
+        "languages": ["en-US"],
         "compressionalgos": [""]
     },
-    "recipient": "Netflix",
-    "renewable": true,
     "messageid": messageid,
-    "timestamp": Math.round((new Date()).getTime() / 1000),
 };
 
 async function getViewableId(viewableIdPath) {
-    console.log('Getting video metadata for ID ' + viewableIdPath);
+    console.log("Getting video metadata for ID " + viewableIdPath);
 
     var apiResp = await fetch(
         shaktiMetadataUrl + viewableIdPath,
@@ -103,7 +92,7 @@ async function getViewableId(viewableIdPath) {
     );
 
     var apiJson = await apiResp.json();
-    console.log('Metadata response:');
+    console.log("Metadata response:");
     console.log(apiJson);
 
     var viewableId = apiJson.video.currentEpisode;
@@ -115,6 +104,7 @@ async function getViewableId(viewableIdPath) {
 }
 
 async function performKeyExchange() {
+    delete header.userauthdata;
     var keyPair = await window.crypto.subtle.generateKey(
         {
             name: "RSA-OAEP",
@@ -131,35 +121,46 @@ async function performKeyExchange() {
         keyPair.publicKey
     );
 
-    header.handshake = true;
-    delete header.userauthdata;
     header.keyrequestdata = [
         {
             "scheme": "ASYMMETRIC_WRAPPED",
             "keydata": {
                 "publickey": arrayBufferToBase64(publicKey),
                 "mechanism": "JWK_RSA",
-                "keypairid": "superKeyPair"
+                "keypairid": "rsaKeypairId"
             }
         }
     ];
 
-    var request = {
+    var headerenvelope = {
         "entityauthdata": {
             "scheme": "NONE",
             "authdata": {
-                "identity": esn,
+                "identity": defaultEsn,
             }
         },
         "signature": "",
     };
 
-    request.headerdata = btoa(JSON.stringify(header));
+    headerenvelope.headerdata = btoa(JSON.stringify(header));
+
+    var payload = {
+        "signature": ""
+    };
+
+    payload.payload = btoa(JSON.stringify({
+        "sequencenumber": 1,
+        "messageid": messageid,
+        "endofmsg": true,
+        "data": ""
+    }));
+
+    var request = JSON.stringify(headerenvelope) + JSON.stringify(payload);
 
     var handshakeResp = await fetch(
         manifestUrl,
         {
-            body: JSON.stringify(request),
+            body: request,
             method: "POST"
         }
     );
@@ -198,61 +199,17 @@ async function performKeyExchange() {
     };
 }
 
-async function getManifest() {
-    console.log('Performing key exchange');
-    var keyExchangeData = await performKeyExchange();
-    console.log('Key exchange data:');
-    console.log(keyExchangeData);
-
-    var headerdata = keyExchangeData.headerdata;
-    var encryptionKeyData = keyExchangeData.encryptionKeyData;
-    var signKeyData = keyExchangeData.signKeyData;
-    var mastertoken = headerdata.keyresponsedata.mastertoken;
-    var sequenceNumber = JSON.parse(atob(mastertoken.tokendata)).sequencenumber;
-    var viewableIdPath = window.location.pathname.substring(7, 15);
-    var viewableId = await getViewableId(viewableIdPath);
-
-    var localeId = "en-US";
-    try {
-        localeId = netflix.appContext.state.model.models.memberContext.data.geo.locale.id;
-    } catch (e) {}
-
-    var manifestRequestData = {
-        "method": "manifest",
-        "lookupType": "STANDARD",
-        "viewableIds": [viewableId],
-        "profiles": profiles,
-        "drmSystem": "widevine",
-        "appId": "14673889385265",
-        "sessionParams": {
-            "pinCapableClient": false,
-            "uiplaycontext": "null"
-        },
-        "sessionId": "14673889385265",
-        "trackId": 0,
-        "flavor": "STANDARD",
-        "secureUrls": true,
-        "supportPreviewContent": true,
-        "showAllSubDubTracks": false,
-        "forceClearStreams": false,
-        "languages": [localeId],
-    };
-
-    header.handshake = false;
-    header.userauthdata = {
-        "scheme": "NETFLIXID",
-        "authdata": {}
-    };
-
+async function generateMslRequestData(data) {
     var iv = window.crypto.getRandomValues(new Uint8Array(16));
     var aesCbc = new aesjs.ModeOfOperation.cbc(
         base64ToArrayBuffer(padBase64(encryptionKeyData.k)),
         iv
     );
+
     var textBytes = aesjs.utils.utf8.toBytes(JSON.stringify(header));
     var encrypted = aesCbc.encrypt(aesjs.padding.pkcs7.pad(textBytes));
     var encryptionEnvelope = {
-        "keyid": esn + "_" + sequenceNumber,
+        "keyid": defaultEsn + "_" + sequenceNumber,
         "sha256": "AA==",
         "iv": arrayBufferToBase64(iv),
         "ciphertext": arrayBufferToBase64(encrypted)
@@ -269,20 +226,9 @@ async function getManifest() {
     
     encryptedHeader.headerdata = btoa(JSON.stringify(encryptionEnvelope));
     
-    var serializedData = [{
-        }, {
-        "headers": {},
-        "path": "/cbp/cadmium-13",
-        "payload": {
-            "data": JSON.stringify(manifestRequestData).replace('"', '\"')
-        },
-        "query": ""
-    }];
-
     var firstPayload = {
         "messageid": messageid,
-        "data": btoa(JSON.stringify(serializedData)),
-        "compressionalgos": [""],
+        "data": btoa(JSON.stringify(data)),
         "sequencenumber": 1,
         "endofmsg": true
     };
@@ -297,7 +243,7 @@ async function getManifest() {
     encrypted = aesCbc.encrypt(aesjs.padding.pkcs7.pad(textBytes));    
     
     encryptionEnvelope = {
-        "keyid": esn + "_" + sequenceNumber,
+        "keyid": defaultEsn + "_" + sequenceNumber,
         "sha256": "AA==",
         "iv": arrayBufferToBase64(iv),
         "ciphertext": arrayBufferToBase64(encrypted)
@@ -312,26 +258,19 @@ async function getManifest() {
         "signature": signature,
         "payload": btoa(JSON.stringify(encryptionEnvelope))
     };
-    
-    var manifestResp = await fetch(
-        manifestUrl,
-        {
-            body: JSON.stringify(encryptedHeader) + JSON.stringify(firstPayloadChunk),
-            credentials: "same-origin",
-            method: "POST"
-        }
-    );
 
-    manifestResp = await manifestResp.text();
+    return JSON.stringify(encryptedHeader) + JSON.stringify(firstPayloadChunk);
+}
 
+async function decryptMslResponse(data) {
     try {
-        JSON.parse(manifestResp);
-        console.error(JSON.parse(atob(JSON.parse(manifestResp).errordata)));
-        throw("Error parsing manifest");
+        JSON.parse(data);
+        console.error(JSON.parse(atob(JSON.parse(data).errordata)));
+        throw("Error parsing data");
     } catch (e) {}
 
     var pattern = /,"signature":"[0-9A-Za-z/+=]+"}/;
-    var payloadsSplit = manifestResp.split("}}")[1].split(pattern);
+    var payloadsSplit = data.split("}}")[1].split(pattern);
     payloadsSplit.pop();
     var payloadChunks = [];
     for (var i = 0; i < payloadsSplit.length; i++) {
@@ -362,15 +301,135 @@ async function getManifest() {
         chunks += atob(plaintext.data);
     }
 
-    var manifest = JSON.parse(atob(JSON.parse(chunks)[1].payload.data));
+    var decrypted = JSON.parse(chunks);
 
-    if (!manifest.success) {
-        console.error(manifest);
-        throw("Error parsing manifest");
+    if (!decrypted.result) {
+        console.error(decrypted);
+        throw("Error parsing decrypted data");
     }
 
-    console.log('Manifest:');
+    return decrypted.result;
+}
+
+async function getManifest(esn=defaultEsn) {
+    defaultEsn = esn;
+    console.log("Performing key exchange");
+    keyExchangeData = await performKeyExchange();
+    console.log("Key exchange data:");
+    console.log(keyExchangeData);
+
+    headerdata = keyExchangeData.headerdata;
+    encryptionKeyData = keyExchangeData.encryptionKeyData;
+    signKeyData = keyExchangeData.signKeyData;
+    mastertoken = headerdata.keyresponsedata.mastertoken;
+    sequenceNumber = JSON.parse(atob(mastertoken.tokendata)).sequencenumber;
+    viewableIdPath = window.location.pathname.substring(7, 15);
+    viewableId = await getViewableId(viewableIdPath);
+
+    localeId = "en-US";
+    try {
+        localeId = netflix.appContext.state.model.models.memberContext.data.geo.locale.id;
+    } catch (e) {}
+
+    var manifestRequestData = {
+        "version": 2,
+        "url": "/manifest",
+        "id": Date.now(),
+        "esn": defaultEsn,
+        "languages": [localeId],
+        "uiVersion": "shakti-v4bf615c3",
+        "clientVersion": "6.0011.511.011",
+        "params": {
+            "type": "standard",
+            "viewableId": viewableId,
+            "profiles": profiles,
+            "flavor": "STANDARD",
+            "drmType": "widevine",
+            "drmVersion": 25,
+            "usePsshBox": true,
+            "isBranching": false,
+            "useHttpsStreams": true,
+            "imageSubtitleHeight": 720,
+            "uiVersion": "shakti-v4bf615c3",
+            "clientVersion": "6.0011.511.011",
+            "supportsPreReleasePin": true,
+            "supportsWatermark": true,
+            "showAllSubDubTracks": false,
+            "videoOutputInfo": [
+                {
+                    "type": "DigitalVideoOutputDescriptor",
+                    "outputType": "unknown",
+                    "supportedHdcpVersions": [],
+                    "isHdcpEngaged": false
+                }
+            ],
+            "preferAssistiveAudio": false,
+            "isNonMember": false
+        }
+    };
+
+    header.userauthdata = {
+        "scheme": "NETFLIXID",
+        "authdata": {}
+    };
+
+    var encryptedManifestRequest = await generateMslRequestData(manifestRequestData);
+
+    var manifestResp = await fetch(
+        manifestUrl,
+        {
+            body: encryptedManifestRequest,
+            credentials: "same-origin",
+            method: "POST",
+            headers: {"Content-Type": "application/json"}
+        }
+    );
+
+    manifestResp = await manifestResp.text();
+    var manifest = await decryptMslResponse(manifestResp);
+
+    console.log("Manifest:");
     console.log(manifest);
 
+    licensePath = manifest.links.license.href;
+
     return manifest;
+}
+
+async function getLicense(challenge, sessionId) {
+    licenseRequestData = {
+        "version": 2,
+        "url": licensePath,
+        "id": Date.now(),
+        "esn": defaultEsn,
+        "languages": [localeId],
+        "uiVersion": "shakti-v4bf615c3",
+        "clientVersion": "6.0011.511.011",
+        "params": [{
+            "sessionId": sessionId,
+            "clientTime": Math.floor(Date.now() / 1000),
+            "challengeBase64": challenge,
+            "xid": Math.floor((Math.floor(Date.now() / 1000) + 0.1612) * 1000)
+        }],
+        "echo": "sessionId"
+    };
+
+    var encryptedLicenseRequest = await generateMslRequestData(licenseRequestData);
+    var licenseResp = await fetch(
+        licenseUrl,
+        {
+            body: encryptedLicenseRequest,
+            credentials: "same-origin",
+            method: "POST",
+            headers: {"Content-Type": "application/json"}
+        }
+    );
+
+    licenseResp = await licenseResp.text();
+    var license = await decryptMslResponse(licenseResp);
+
+    console.log("License:");
+    console.log(license);
+
+    return license;
 }
