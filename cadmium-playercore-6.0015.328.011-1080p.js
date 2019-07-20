@@ -1,3 +1,4 @@
+var esnPrefix;
 var challenge;
 var sessionId;
 var manifestOverridden = false;
@@ -53026,7 +53027,7 @@ H4DD.b57 = function() {
             var b;
             b = this.Ma.eg.ma(k.em);
             return {
-                inputs: a.ip.map(async function(f) {
+                inputs: a.ip.map(function(f) {
                     return {
                         sessionId: f.sessionId,
                         clientTime: b,
@@ -53228,7 +53229,22 @@ H4DD.b57 = function() {
                 return {
                     type: "standard",
                     viewableId: g,
-                    profiles: h,
+                    profiles: [
+                        "playready-h264mpl30-dash",
+                        "playready-h264mpl31-dash",
+                        "playready-h264mpl40-dash",
+                        "playready-h264hpl30-dash",
+                        "playready-h264hpl31-dash",
+                        "playready-h264hpl40-dash",
+                        "vp9-profile0-L30-dash-cenc",
+                        "vp9-profile0-L31-dash-cenc",
+                        "vp9-profile0-L40-dash-cenc",
+                        "heaac-2-dash",
+                        "simplesdh",
+                        "nflx-cmisc",
+                        "BIF240",
+                        "BIF320"
+                    ],
                     flavor: r.fd.l0a(a.mI),
                     drmType: m,
                     drmVersion: k,
@@ -55453,7 +55469,7 @@ H4DD.b57 = function() {
                     return c.ws(a, b, f);
                 });
                 if (d.error) throw d.error;
-                if (/watch/.test(window.location.pathname)) {
+                if (/watch/.test(window.location.pathname) && esnPrefix != "NFCDCH-LX-") {
                     if (d.result.from.startsWith("nq_cadmium_pbo_manifests") && !manifestOverridden) {
                         d.result.result = await getManifest("NFCDIE-03-" + generateEsn());
                         manifestOverridden = true;
@@ -59689,7 +59705,7 @@ H4DD.b57 = function() {
                 JQ: a.JQ,
                 bh: x.fua(a.bh),
                 ul: l.hn[a.ul],
-                ip: a.ip.map(async function(a) {
+                ip: a.ip.map(function(a) {
                     challenge = b.ml.encode(a.data);
                     sessionId = a.sessionId;
                     return {
@@ -101690,6 +101706,7 @@ H4DD.b57 = function() {
             this.$i = !0;
             this.pC = d ? "D" : b ? "C" : c ? "O" : "M";
             this.Im = d ? "NFCDIE-04-" : c ? "NFCDOP-01-" : /Windows NT/.test(a) ? "NFCDCH-02-" : /Intel Mac OS X/.test(a) ? "NFCDCH-MC-" : b ? "NFCDCH-01-" : /Android.*Chrome\/[.0-9]* Mobile/.test(a) ? "NFCDCH-AP-" : /Android.*Chrome\/[.0-9]* /.test(a) ? "NFCDCH-AT-" : "NFCDCH-LX-";
+            esnPrefix = this.Im;
             this.R3 = !0;
             this.y2 = b ? "chromeos-cadmium" : c ? "opera-cadmium" : "chrome-cadmium";
             this.x2 = "browser";
