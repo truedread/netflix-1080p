@@ -338,7 +338,7 @@ async function getManifest(esn=defaultEsn) {
         "esn": defaultEsn,
         "languages": [localeId],
         "uiVersion": "shakti-v4bf615c3",
-        "clientVersion": "6.0011.511.011",
+        "clientVersion": "6.0015.328.011",
         "params": {
             "type": "standard",
             "viewableId": viewableId,
@@ -351,7 +351,7 @@ async function getManifest(esn=defaultEsn) {
             "useHttpsStreams": true,
             "imageSubtitleHeight": 720,
             "uiVersion": "shakti-v4bf615c3",
-            "clientVersion": "6.0011.511.011",
+            "clientVersion": "6.0015.328.011",
             "supportsPreReleasePin": true,
             "supportsWatermark": true,
             "showAllSubDubTracks": false,
@@ -404,7 +404,7 @@ async function getLicense(challenge, sessionId) {
         "esn": defaultEsn,
         "languages": [localeId],
         "uiVersion": "shakti-v4bf615c3",
-        "clientVersion": "6.0011.511.011",
+        "clientVersion": "6.0015.328.011",
         "params": [{
             "sessionId": sessionId,
             "clientTime": Math.floor(Date.now() / 1000),

@@ -53226,25 +53226,36 @@ H4DD.b57 = function() {
                 m = m.next().value;
                 l = p && void 0 !== p.SUPPORTS_SECURE_STOP ? !!p.SUPPORTS_SECURE_STOP : void 0;
                 p = p ? p.DEVICE_SECURITY_LEVEL : void 0;
-                return {
-                    type: "standard",
-                    viewableId: g,
-                    profiles: [
+                var profiles = [
                         "playready-h264mpl30-dash",
                         "playready-h264mpl31-dash",
                         "playready-h264mpl40-dash",
+                        "heaac-2-dash",
+                        "simplesdh",
+                        "nflx-cmisc",
+                        "BIF240",
+                        "BIF320"
+                ];
+
+                if(esnPrefix == 'NFCDCH-LX-') {
+                    profiles = profiles.concat([
                         "playready-h264hpl30-dash",
                         "playready-h264hpl31-dash",
                         "playready-h264hpl40-dash",
                         "vp9-profile0-L30-dash-cenc",
                         "vp9-profile0-L31-dash-cenc",
                         "vp9-profile0-L40-dash-cenc",
-                        "heaac-2-dash",
-                        "simplesdh",
-                        "nflx-cmisc",
-                        "BIF240",
-                        "BIF320"
-                    ],
+                    ]);
+
+                    if(use6Channels) {
+                        profiles.push("heaac-5.1-dash");
+                    }
+                }
+
+                return {
+                    type: "standard",
+                    viewableId: g,
+                    profiles: profiles,
                     flavor: r.fd.l0a(a.mI),
                     drmType: m,
                     drmVersion: k,
@@ -55471,16 +55482,21 @@ H4DD.b57 = function() {
                 if (d.error) throw d.error;
                 if (/watch/.test(window.location.pathname) && esnPrefix != "NFCDCH-LX-") {
                     if (d.result.from.startsWith("nq_cadmium_pbo_manifests") && !manifestOverridden) {
-                        d.result.result = await getManifest("NFCDIE-03-" + generateEsn());
-                        manifestOverridden = true;
-                    }
-
-                    if (d.result.from.startsWith("nq_cadmium_pbo_licenses") && !licenseOverridden) {
-                        if (/Intel Mac OS X/.test(navigator.userAgent)) {
-                            await getManifest("NFCDIE-04-" + generateEsn());
+                        var edgeLocked = true;
+                        if (d.result.result.video_tracks[0].profile == "playready-h264mpl40-dash") {
+                            console.log('Manifest is not Edge locked, not doing anything');
+                            edgeLocked = false;
                         }
-                        d.result.result = await getLicense(challenge, sessionId);
-                        licenseOverridden = true;
+
+                        if (edgeLocked) {
+                            console.log("Manifest locked to Edge (or not available in 1080p)");
+                            console.log("Getting Edge manifest");
+                            var manifest = await getManifest("NFCDIE-03-" + generateEsn());
+                            console.log("Acquisition successful, commence playback");
+                            manifest.playbackContextId = d.result.result.playbackContextId;
+                            d.result.result = manifest;
+                            manifestOverridden = true;
+                        }
                     }
                 }
 
@@ -101705,7 +101721,7 @@ H4DD.b57 = function() {
             this.version = "6.0015.328.011";
             this.$i = !0;
             this.pC = d ? "D" : b ? "C" : c ? "O" : "M";
-            this.Im = d ? "NFCDIE-04-" : c ? "NFCDOP-01-" : /Windows NT/.test(a) ? "NFCDCH-02-" : /Intel Mac OS X/.test(a) ? "NFCDCH-MC-" : b ? "NFCDCH-01-" : /Android.*Chrome\/[.0-9]* Mobile/.test(a) ? "NFCDCH-AP-" : /Android.*Chrome\/[.0-9]* /.test(a) ? "NFCDCH-AT-" : "NFCDCH-LX-";
+            this.Im = d ? "NFCDIE-04-" : c ? "NFCDOP-01-" : /Windows NT/.test(a) ? "NFCDIE-03-" : /Intel Mac OS X/.test(a) ? "NFCDIE-04-" : b ? "NFCDCH-01-" : /Android.*Chrome\/[.0-9]* Mobile/.test(a) ? "NFCDCH-AP-" : /Android.*Chrome\/[.0-9]* /.test(a) ? "NFCDCH-AT-" : "NFCDCH-LX-";
             esnPrefix = this.Im;
             this.R3 = !0;
             this.y2 = b ? "chromeos-cadmium" : c ? "opera-cadmium" : "chrome-cadmium";
