@@ -1,8 +1,5 @@
 var esnPrefix;
-var challenge;
-var sessionId;
 var manifestOverridden = false;
-var licenseOverridden = false;
 
 H4DD.A5C = function() {
     return typeof H4DD.m5C.N6n === 'function' ? H4DD.m5C.N6n.apply(H4DD.m5C, arguments) : H4DD.m5C.N6n;
@@ -53246,10 +53243,10 @@ H4DD.b57 = function() {
                         "vp9-profile0-L31-dash-cenc",
                         "vp9-profile0-L40-dash-cenc",
                     ]);
+                }
 
-                    if(use6Channels) {
-                        profiles.push("heaac-5.1-dash");
-                    }
+                if(use6Channels) {
+                    profiles.push("heaac-5.1-dash");
                 }
 
                 return {
@@ -59722,8 +59719,6 @@ H4DD.b57 = function() {
                 bh: x.fua(a.bh),
                 ul: l.hn[a.ul],
                 ip: a.ip.map(function(a) {
-                    challenge = b.ml.encode(a.data);
-                    sessionId = a.sessionId;
                     return {
                         sessionId: a.sessionId,
                         dataBase64: b.ml.encode(a.data)
