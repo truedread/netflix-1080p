@@ -53224,26 +53224,21 @@ H4DD.b57 = function() {
                 l = p && void 0 !== p.SUPPORTS_SECURE_STOP ? !!p.SUPPORTS_SECURE_STOP : void 0;
                 p = p ? p.DEVICE_SECURITY_LEVEL : void 0;
                 var profiles = [
-                        "playready-h264mpl30-dash",
-                        "playready-h264mpl31-dash",
-                        "playready-h264mpl40-dash",
-                        "heaac-2-dash",
-                        "simplesdh",
-                        "nflx-cmisc",
-                        "BIF240",
-                        "BIF320"
+                    "playready-h264mpl30-dash",
+                    "playready-h264mpl31-dash",
+                    "playready-h264mpl40-dash",
+                    "playready-h264hpl30-dash",
+                    "playready-h264hpl31-dash",
+                    "playready-h264hpl40-dash",
+                    "vp9-profile0-L30-dash-cenc",
+                    "vp9-profile0-L31-dash-cenc",
+                    "vp9-profile0-L40-dash-cenc",
+                    "heaac-2-dash",
+                    "simplesdh",
+                    "nflx-cmisc",
+                    "BIF240",
+                    "BIF320"
                 ];
-
-                if(esnPrefix == 'NFCDCH-LX-') {
-                    profiles = profiles.concat([
-                        "playready-h264hpl30-dash",
-                        "playready-h264hpl31-dash",
-                        "playready-h264hpl40-dash",
-                        "vp9-profile0-L30-dash-cenc",
-                        "vp9-profile0-L31-dash-cenc",
-                        "vp9-profile0-L40-dash-cenc",
-                    ]);
-                }
 
                 if(use6Channels) {
                     profiles.push("heaac-5.1-dash");
@@ -55477,26 +55472,6 @@ H4DD.b57 = function() {
                     return c.ws(a, b, f);
                 });
                 if (d.error) throw d.error;
-                if (/watch/.test(window.location.pathname) && esnPrefix != "NFCDCH-LX-") {
-                    if (d.result.from.startsWith("nq_cadmium_pbo_manifests") && !manifestOverridden) {
-                        var edgeLocked = true;
-                        if (d.result.result.video_tracks[0].profile == "playready-h264mpl40-dash") {
-                            console.log('Manifest is not Edge locked, not doing anything');
-                            edgeLocked = false;
-                        }
-
-                        if (edgeLocked) {
-                            console.log("Manifest locked to Edge (or not available in 1080p)");
-                            console.log("Getting Edge manifest");
-                            var manifest = await getManifest("NFCDIE-03-" + generateEsn());
-                            console.log("Acquisition successful, commence playback");
-                            manifest.playbackContextId = d.result.result.playbackContextId;
-                            d.result.result = manifest;
-                            manifestOverridden = true;
-                        }
-                    }
-                }
-
                 if (void 0 === d.result) throw {
                     pboc: !1,
                     code: "FAIL",
