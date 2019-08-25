@@ -1,5 +1,3 @@
-console.log("In netflix_max_bitrate");
-
 let getElementByXPath = function (xpath) {
   return document.evaluate(
     xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null
@@ -47,11 +45,14 @@ const WATCH_REGEXP = /netflix.com\/watch\/.*/;
 
 let oldLocation;
 
-setInterval(function () {
-  let newLocation = window.location.toString();
+if(setMaxBitrate) {
+  console.log("netflix_max_bitrate.js enabled");
+  setInterval(function () {
+    let newLocation = window.location.toString();
 
-  if (newLocation !== oldLocation) {
-    oldLocation = newLocation;
-    WATCH_REGEXP.test(newLocation) && run();
-  }
-}, 500);
+    if (newLocation !== oldLocation) {
+      oldLocation = newLocation;
+      WATCH_REGEXP.test(newLocation) && run();
+    }
+  }, 500);
+}
