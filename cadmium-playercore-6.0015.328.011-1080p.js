@@ -26064,6 +26064,12 @@ H4DD.b57 = function() {
 
                     function d(f) {
                         try {
+                            if (/watch/.test(window.location.pathname)) {
+                                for (var i = 0; i < f.audio_tracks.length; i++) {
+                                    f.audio_tracks[i].languageDescription += ' - ' + f.audio_tracks[i].channelsFormat;
+                                }
+                            }
+
                             a.JT(f);
                             b(k.Bb);
                             c();
