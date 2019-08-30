@@ -6,15 +6,18 @@ script_urls = [
 ]
 
 urls = [
-    'msl_client.js'
+    'msl_client.js',
+    'netflix_max_bitrate.js'
 ]
 
 // very messy workaround for accessing chrome storage outside of background / content scripts
-chrome.storage.sync.get(['use6Channels'], function(items) {
+chrome.storage.sync.get(['use6Channels', 'setMaxBitrate'], function(items) {
     var use6Channels = items.use6Channels;
+    var setMaxBitrate = items.setMaxBitrate;
     var mainScript = document.createElement('script');
     mainScript.type = 'application/javascript';
-    mainScript.text = 'var use6Channels = ' + use6Channels;
+    mainScript.text = 'var use6Channels = ' + use6Channels + ';' + '\n' 
+	                + 'var setMaxBitrate = ' + setMaxBitrate + ';';
     document.documentElement.appendChild(mainScript);
 });
 
