@@ -2,7 +2,7 @@
 
 script_urls = [
     'https://cdn.rawgit.com/ricmoo/aes-js/master/index.js',
-    'https://cdn.rawgit.com/Caligatio/jsSHA/master/src/sha.js'
+    'https://raw.githubusercontent.com/Caligatio/jsSHA/v2/src/sha1.js'
 ]
 
 urls = [
