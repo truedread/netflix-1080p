@@ -15,8 +15,8 @@ function save_options() {
 
 function restore_options() {
     chrome.storage.sync.get({
-        use6Channels: false,
-        setMaxBitrate: false
+        use6Channels: true,
+        setMaxBitrate: true
     }, function(items) {
         document.getElementById('5.1').checked = items.use6Channels;
         document.getElementById('setMaxBitrate').checked = items.setMaxBitrate;
