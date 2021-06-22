@@ -30,7 +30,6 @@
     "open_in_tab": false
   },
   "web_accessible_resources": [
-    // "msl_client.js",
     "netflix_max_bitrate.js",
     "cadmium-playercore-6.0031.174.911-1080p.js"
   ],

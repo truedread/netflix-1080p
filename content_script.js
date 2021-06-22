@@ -1,7 +1,6 @@
 // From EME Logger extension
 
 urls = [
-    // 'msl_client.js',
     'netflix_max_bitrate.js'
 ]
 
