@@ -1,12 +1,7 @@
 // From EME Logger extension
 
-script_urls = [
-    'https://cdn.rawgit.com/ricmoo/aes-js/master/index.js',
-    'https://cdn.rawgit.com/Caligatio/jsSHA/master/src/sha.js'
-]
-
 urls = [
-    'msl_client.js',
+    // 'msl_client.js',
     'netflix_max_bitrate.js'
 ]
 
@@ -20,12 +15,6 @@ chrome.storage.sync.get(['use6Channels', 'setMaxBitrate'], function(items) {
 	                + 'var setMaxBitrate = ' + setMaxBitrate + ';';
     document.documentElement.appendChild(mainScript);
 });
-
-for (var i = 0; i < script_urls.length; i++) {
-    var script = document.createElement('script');
-    script.src = script_urls[i];
-    document.documentElement.appendChild(script);
-}
 
 for (var i = 0; i < urls.length; i++) {
     var mainScriptUrl = chrome.extension.getURL(urls[i]);
